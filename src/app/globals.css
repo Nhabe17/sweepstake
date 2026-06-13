@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pitch: #0b6e4f;
+  --color-pitch-dark: #07502f;
+  --color-brand: #0e9f6e;
+  --color-brand-dark: #057a55;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-card: #ffffff;
+  --color-bg: #f1f5f9;
+
+  --animate-fade-in: fadeIn 0.2s ease-out;
+  --animate-slide-up: slideUp 0.25s ease-out;
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  @keyframes slideUp {
+    0% { transform: translateY(8px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+}
+
+html, body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Respect the iOS safe area so the bottom nav clears the home indicator. */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
