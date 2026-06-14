@@ -18,12 +18,15 @@ export default function LeaderboardPage() {
 
   if (loading) return <LoadingState />;
 
+  const lastPlacePoints = leaderboard[leaderboard.length - 1]?.points ?? 0;
+  const bottomCount = leaderboard.filter((r) => r.points === lastPlacePoints).length;
+
   return (
     <div className="space-y-3">
       <PageHeader title="Leaderboard" subtitle="Tap a player to see their teams" />
       {leaderboard.length ? (
         leaderboard.map((row) => (
-          <LeaderboardCard key={row.player.id} row={row} teams={teams} matches={matches} settings={settings} />
+          <LeaderboardCard key={row.player.id} row={row} teams={teams} matches={matches} settings={settings} totalPlayers={leaderboard.length} lastPlacePoints={lastPlacePoints} bottomCount={bottomCount} />
         ))
       ) : (
         <EmptyState title="No players yet" hint="Add players in the Admin area." />

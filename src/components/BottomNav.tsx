@@ -11,7 +11,6 @@ const ITEMS: NavItem[] = [
   { href: '/matches', label: 'Matches', icon: '⚽' },
   { href: '/leaderboard', label: 'Table', icon: '🏆' },
   { href: '/my-teams', label: 'My Teams', icon: '👤' },
-  { href: '/admin', label: 'Admin', icon: '⚙️' },
 ];
 
 function isActive(pathname: string, href: string): boolean {

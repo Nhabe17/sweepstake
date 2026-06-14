@@ -18,7 +18,7 @@ export default function TeamNameWithOwner({
   return (
     <span className={`inline-flex max-w-full min-w-0 items-center gap-1.5 align-baseline ${className}`}>
       <TeamFlag countryCode={team.countryCode} />
-      <span className="min-w-0">{team.name}</span>
+      <span className="min-w-0 truncate">{team.name}</span>
       <span className={`shrink-0 text-muted ${codeClassName}`}>({owner?.displayCode ?? '-'})</span>
     </span>
   );

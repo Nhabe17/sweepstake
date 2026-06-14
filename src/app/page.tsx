@@ -8,6 +8,7 @@ import { teamPointsInMatch } from '@/lib/calculations/effectiveResult';
 import { isToday } from '@/lib/format';
 import PageHeader from '@/components/PageHeader';
 import MatchCardResolved from '@/components/MatchCardResolved';
+import Confetti from '@/components/Confetti';
 import { LoadingState, EmptyState } from '@/components/states';
 
 export default function HomePage() {
@@ -46,7 +47,8 @@ export default function HomePage() {
       <PageHeader title={settings.tournamentName} subtitle="Family & friends — who's winning?" />
 
       {leader ? (
-        <section className="rounded-xl bg-gradient-to-br from-pitch to-pitch-dark p-5 text-white shadow-sm">
+        <section className="relative rounded-xl bg-gradient-to-br from-pitch to-pitch-dark p-5 text-white shadow-sm">
+          <Confetti />
           <p className="text-xs uppercase tracking-wide text-white/70">Current leader</p>
           <p className="mt-1 text-2xl font-bold">
             🥇 {leader.player.name} <span className="text-white/70">({leader.player.displayCode})</span>
@@ -100,6 +102,12 @@ export default function HomePage() {
           <EmptyState title="Nothing scheduled" />
         )}
       </Section>
+
+      <div className="pt-2 text-center">
+        <Link href="/admin" className="text-xs text-slate-400 transition-colors hover:text-muted">
+          ⚙ Admin
+        </Link>
+      </div>
     </div>
   );
 }

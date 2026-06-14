@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { Match, Player, Settings, Team } from '@/lib/types';
 import { getEffectiveScore, teamPointsInMatch } from '@/lib/calculations/effectiveResult';
-import { dayTimeLabel } from '@/lib/format';
+import { dayLabel, timeLabel } from '@/lib/format';
 import TeamName from './TeamName';
 import TeamNameWithOwner from './TeamNameWithOwner';
 
@@ -16,9 +16,19 @@ const STAGE_LABEL: Record<Match['stage'], string> = {
 };
 
 function StatusBadge({ status }: { status: Match['status'] }) {
-  const map: Record<Match['status'], { label: string; cls: string }> = {
+  if (status === 'live') {
+    return (
+      <span className="flex items-center gap-1.5 rounded-full bg-red-100 px-2 py-0.5 text-[11px] font-semibold text-red-700">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-red-600" />
+        </span>
+        Live
+      </span>
+    );
+  }
+  const map: Record<Exclude<Match['status'], 'live'>, { label: string; cls: string }> = {
     scheduled: { label: 'Upcoming', cls: 'bg-slate-100 text-slate-600' },
-    live: { label: 'Live', cls: 'bg-red-100 text-red-700' },
     finished: { label: 'Full time', cls: 'bg-emerald-100 text-emerald-700' },
     postponed: { label: 'Postponed', cls: 'bg-amber-100 text-amber-700' },
   };
@@ -54,16 +64,16 @@ export default function MatchCard({
         <StatusBadge status={match.status} />
       </div>
 
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1 font-semibold text-ink">
           <TeamNameWithOwner team={homeTeam} owner={homeOwner} />
         </div>
         {showScore ? (
-          <div className="shrink-0 text-lg font-bold tabular-nums text-ink">
-            {score!.homeScore}-{score!.awayScore}
+          <div className="w-16 shrink-0 text-center text-lg font-bold tabular-nums text-ink">
+            {score!.homeScore}–{score!.awayScore}
           </div>
         ) : (
-          <div className="shrink-0 text-xs text-muted">vs</div>
+          <div className="w-16 shrink-0 text-center text-xs text-muted">vs</div>
         )}
         <div className="min-w-0 flex-1 text-right font-semibold text-ink">
           <TeamNameWithOwner team={awayTeam} owner={awayOwner} />
@@ -72,12 +82,15 @@ export default function MatchCard({
 
       {score && (score.homePens != null || score.awayPens != null) ? (
         <p className="mt-1 text-center text-[11px] text-muted">
-          Penalties {score.homePens}-{score.awayPens}
+          Penalties {score.homePens}–{score.awayPens}
         </p>
       ) : null}
 
-      {match.status !== 'finished' ? (
-        <p className="mt-2 text-center text-xs text-muted">{dayTimeLabel(match.kickoffAt)}</p>
+      {match.status === 'scheduled' ? (
+        <div className="mt-2 text-center">
+          <p className="text-sm font-semibold text-ink">{timeLabel(match.kickoffAt)}</p>
+          <p className="text-[11px] text-muted">{dayLabel(match.kickoffAt)}</p>
+        </div>
       ) : null}
 
       <PointsSummary
