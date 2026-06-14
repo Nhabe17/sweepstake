@@ -81,6 +81,8 @@ Supabase has a free tier that comfortably covers this app.
    ```bash
    NEXT_PUBLIC_SUPABASE_URL=...
    NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   FOOTBALL_API_KEY=...            # optional live score sync
+   ODDS_API_KEY=...                # optional The Odds API betting odds sync
    SUPABASE_SERVICE_ROLE_KEY=...   # server only — never exposed to the browser
    ```
 
@@ -135,7 +137,10 @@ The app uses a provider abstraction (`src/lib/football/`):
   (football-data.org, API-Football, etc.). Write live scores into the `api_*` columns so
   manual overrides keep taking precedence, then run it on a Vercel Cron or an admin button.
 
-Set `FOOTBALL_API_KEY` / `FOOTBALL_API_PROVIDER` in the environment when implementing it.
+Set `FOOTBALL_API_KEY` for live score sync. Set `ODDS_API_KEY` to enable cached 1X2
+betting odds from The Odds API when **Admin -> Settings -> Show betting odds** is on.
+For existing Supabase projects, run
+[`supabase/migrations/20260614000000_add_match_odds.sql`](supabase/migrations/20260614000000_add_match_odds.sql).
 
 ## Deploying to Vercel
 
@@ -151,4 +156,4 @@ local data, so set up Supabase for a true shared sweepstake.
 - Admin PIN or Supabase email auth + `is_admin` (currently ungated for MVP).
 - Knockout bracket + best-third-place qualification (status is approximated today).
 - Progression/penalty **bonus scoring** (toggles already present, off by default).
-- Live scores via the real API provider; odds display.
+- Knockout live-data polish and richer betting markets.

@@ -49,9 +49,29 @@ export interface Match {
   overrideAwayScore?: number | null;
   overrideHomePens?: number | null;
   overrideAwayPens?: number | null;
+  odds?: MatchOdds | null;
   hasManualOverride: boolean;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface OddsPrice {
+  price: number;
+  bookmaker: string;
+  lastUpdate?: string | null;
+}
+
+export interface MatchOdds {
+  provider: 'the-odds-api';
+  eventId: string;
+  market: string;
+  region: string;
+  format: string;
+  home: OddsPrice | null;
+  draw: OddsPrice | null;
+  away: OddsPrice | null;
+  providerLastUpdate?: string | null;
+  syncedAt: string;
 }
 
 export interface Settings {

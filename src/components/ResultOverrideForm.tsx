@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import type { Match, MatchStatus, Team } from '@/lib/types';
 import type { OverrideInput } from '@/lib/data/store';
+import TeamName from './TeamName';
 
 const STATUSES: MatchStatus[] = ['scheduled', 'live', 'finished', 'postponed'];
 
@@ -48,7 +49,9 @@ export default function ResultOverrideForm({
     <div className="space-y-3 rounded-xl border border-brand/30 bg-white p-4 shadow-sm">
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-2">
         <label className="text-sm">
-          <span className="text-xs text-muted">{homeTeam?.name ?? 'Home'}</span>
+          <span className="text-xs text-muted">
+            <TeamName team={homeTeam} fallback="Home" />
+          </span>
           <input
             inputMode="numeric"
             value={home}
@@ -58,7 +61,9 @@ export default function ResultOverrideForm({
         </label>
         <span className="pb-3 text-muted">–</span>
         <label className="text-sm">
-          <span className="text-xs text-muted">{awayTeam?.name ?? 'Away'}</span>
+          <span className="text-xs text-muted">
+            <TeamName team={awayTeam} fallback="Away" />
+          </span>
           <input
             inputMode="numeric"
             value={away}

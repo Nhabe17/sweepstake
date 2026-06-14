@@ -80,7 +80,12 @@ export default function AdminSettingsPage() {
       </section>
 
       <section className="space-y-2 rounded-xl bg-white p-4 shadow-sm">
-        <Toggle label="Show odds" checked={settings.showOdds} onChange={(v) => toggle('showOdds', v)} />
+        <Toggle
+          label="Show betting odds"
+          hint="Shows cached 1X2 odds when ODDS_API_KEY sync is configured."
+          checked={settings.showOdds}
+          onChange={(v) => toggle('showOdds', v)}
+        />
         <Toggle
           label="Progression bonuses"
           hint="Reserved for future bonus scoring (off by default)."

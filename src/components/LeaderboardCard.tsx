@@ -4,6 +4,7 @@ import { useState } from 'react';
 import type { Match, Settings, Team } from '@/lib/types';
 import type { LeaderboardRow } from '@/lib/calculations/sweepstakeLeaderboard';
 import { STATUS_LABEL, nextMatchForTeam, teamStatusInGroup } from '@/lib/derive';
+import TeamName from './TeamName';
 
 const MEDAL: Record<number, string> = { 1: '🥇', 2: '🥈', 3: '🥉' };
 
@@ -73,10 +74,15 @@ export default function LeaderboardCard({
                 return (
                   <li key={bd.team.id} className="flex items-center justify-between gap-2 text-sm">
                     <span className="min-w-0">
-                      <span className="font-medium text-ink">{bd.team.name}</span>
+                      <TeamName team={bd.team} className="font-medium text-ink" />
                       <span className="block text-[11px] text-muted">
                         <span className={STATUS_CLS[STATUS_LABEL[status]]}>{STATUS_LABEL[status]}</span>
-                        {nextOpp ? ` · Next: vs ${nextOpp.name}` : ''}
+                        {nextOpp ? (
+                          <>
+                            {' - Next: vs '}
+                            <TeamName team={nextOpp} />
+                          </>
+                        ) : null}
                       </span>
                     </span>
                     <span className="shrink-0 font-bold tabular-nums text-brand-dark">{bd.points} pts</span>

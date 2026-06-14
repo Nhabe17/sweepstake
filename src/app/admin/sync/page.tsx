@@ -26,7 +26,7 @@ export default function AdminSyncPage() {
   return (
     <div className="space-y-4">
       <Link href="/admin" className="text-sm text-muted">← Admin</Link>
-      <PageHeader title="Live scores" subtitle="Pull real match results from football-data.org" />
+      <PageHeader title="Live scores" subtitle="Pull real match results and cached betting odds" />
 
       <div className="rounded-xl bg-white p-4 shadow-sm space-y-3">
         <button
@@ -64,13 +64,16 @@ export default function AdminSyncPage() {
         <p className="text-sm font-semibold text-ink">Setup (free automatic sync)</p>
         <ol className="space-y-2 text-sm text-muted list-decimal list-inside">
           <li>
-            Register for a free API key at{' '}
-            <strong className="text-ink">football-data.org</strong>
+            Register for a free scores API key at <strong className="text-ink">football-data.org</strong>
+          </li>
+          <li>
+            Optional: register for a free odds API key at <strong className="text-ink">the-odds-api.com</strong>
           </li>
           <li>
             Add these to your Vercel environment variables (or <code>.env.local</code>):
             <pre className="mt-1 rounded bg-slate-100 p-2 text-xs text-ink whitespace-pre-wrap">
 {`FOOTBALL_API_KEY=your_key_here
+ODDS_API_KEY=your_odds_key_here
 SYNC_SECRET=a_random_secret_string`}
             </pre>
           </li>
@@ -88,7 +91,8 @@ SYNC_SECRET=a_random_secret_string`}
           </li>
         </ol>
         <p className="text-xs text-muted">
-          Only non-overridden matches are updated. Manual result overrides always take precedence.
+          Only non-overridden scores are updated. Betting odds sync only runs when Show betting odds is enabled
+          and is throttled to protect the free quota.
         </p>
       </div>
     </div>

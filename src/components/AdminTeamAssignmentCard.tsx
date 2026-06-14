@@ -1,4 +1,5 @@
 import type { Player, Team } from '@/lib/types';
+import TeamName from './TeamName';
 
 export default function AdminTeamAssignmentCard({
   team,
@@ -12,7 +13,9 @@ export default function AdminTeamAssignmentCard({
   return (
     <li className="flex items-center justify-between gap-3 rounded-xl bg-white p-3 shadow-sm">
       <div className="min-w-0">
-        <p className="font-medium text-ink">{team.name}</p>
+        <p className="font-medium text-ink">
+          <TeamName team={team} />
+        </p>
         <p className="text-xs text-muted">
           Group {team.groupLetter}
           {team.pot ? ` · Pot ${team.pot}` : ''}

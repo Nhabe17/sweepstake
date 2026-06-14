@@ -1,6 +1,6 @@
 'use server';
 
-import { createFootballDataProvider } from '@/lib/football/footballDataProvider';
+import { fullSyncMessage, syncScoresAndOdds } from '@/lib/sync/syncAll';
 import { getServiceClient } from '@/lib/supabase/server';
 
 export interface SyncResult {
@@ -11,9 +11,12 @@ export interface SyncResult {
 
 export async function syncScoresAction(): Promise<SyncResult> {
   try {
-    const provider = createFootballDataProvider();
-    const { updated } = await provider.syncMatchesToDatabase();
-    return { ok: true, updated, message: `Updated ${updated} match${updated === 1 ? '' : 'es'}` };
+    const result = await syncScoresAndOdds({ forceOdds: true });
+    return {
+      ok: result.odds.ok,
+      updated: result.scoresUpdated,
+      message: fullSyncMessage(result),
+    };
   } catch (err) {
     return { ok: false, updated: 0, message: err instanceof Error ? err.message : String(err) };
   }

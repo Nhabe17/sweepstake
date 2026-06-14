@@ -8,6 +8,8 @@ import { computeGroupTable } from '@/lib/calculations/groupStandings';
 import { getEffectiveScore } from '@/lib/calculations/effectiveResult';
 import { STATUS_LABEL, lastResultForTeam, nextMatchForTeam, teamStatusInGroup } from '@/lib/derive';
 import PageHeader from '@/components/PageHeader';
+import TeamName from '@/components/TeamName';
+import TeamNameWithOwner from '@/components/TeamNameWithOwner';
 import { LoadingState, EmptyState } from '@/components/states';
 
 export default function MyTeamsPage() {
@@ -74,7 +76,7 @@ export default function MyTeamsPage() {
                   <article key={bd.team.id} className="rounded-xl bg-white p-4 shadow-sm">
                     <div className="flex items-center justify-between">
                       <p className="font-semibold text-ink">
-                        {bd.team.name} <span className="text-muted">({row.player.displayCode})</span>
+                        <TeamNameWithOwner team={bd.team} owner={row.player} />
                       </p>
                       <span className="font-bold tabular-nums text-brand-dark">{bd.points} pts</span>
                     </div>
@@ -83,12 +85,16 @@ export default function MyTeamsPage() {
                       {groupPos ? ` — ${ordinal(groupPos)}` : ''} · {STATUS_LABEL[status]}
                     </p>
                     {next && nextOpp ? (
-                      <p className="mt-1 text-sm text-muted">Next: vs {nextOpp.name}</p>
+                      <p className="mt-1 text-sm text-muted">
+                        Next: vs <TeamName team={nextOpp} />
+                      </p>
                     ) : null}
                     {last && lastOpp && lastScore ? (
                       <p className="mt-1 text-sm text-muted">
-                        Last: {bd.team.name} {last.homeTeamId === bd.team.id ? lastScore.homeScore : lastScore.awayScore}
-                        –{last.homeTeamId === bd.team.id ? lastScore.awayScore : lastScore.homeScore} {lastOpp.name}
+                        Last: <TeamName team={bd.team} />{' '}
+                        {last.homeTeamId === bd.team.id ? lastScore.homeScore : lastScore.awayScore}
+                        –{last.homeTeamId === bd.team.id ? lastScore.awayScore : lastScore.homeScore}{' '}
+                        <TeamName team={lastOpp} />
                       </p>
                     ) : null}
                   </article>

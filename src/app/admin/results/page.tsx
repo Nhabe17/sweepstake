@@ -9,6 +9,7 @@ import { getEffectiveScore } from '@/lib/calculations/effectiveResult';
 import { dayTimeLabel } from '@/lib/format';
 import PageHeader from '@/components/PageHeader';
 import ResultOverrideForm from '@/components/ResultOverrideForm';
+import TeamName from '@/components/TeamName';
 import { LoadingState } from '@/components/states';
 
 export default function AdminResultsPage() {
@@ -76,7 +77,8 @@ export default function AdminResultsPage() {
             <li key={m.id} className="flex items-center justify-between gap-2 rounded-xl bg-white p-3 shadow-sm">
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium text-ink">
-                  {home?.name} {score ? `${score.homeScore}–${score.awayScore}` : 'vs'} {away?.name}
+                  <TeamName team={home} fallback="Home" /> {score ? `${score.homeScore}–${score.awayScore}` : 'vs'}{' '}
+                  <TeamName team={away} fallback="Away" />
                   {m.hasManualOverride ? <span className="ml-2 text-[11px] text-amber-600">overridden</span> : null}
                 </p>
                 <p className="text-xs text-muted">

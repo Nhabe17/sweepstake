@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { createFootballDataProvider } from '@/lib/football/footballDataProvider';
+import { syncScoresAndOdds } from '@/lib/sync/syncAll';
 
 // GET /api/sync?token=<SYNC_SECRET>
 // Called by an external cron service (e.g. cron-job.org) to pull live scores from
@@ -15,9 +15,8 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const provider = createFootballDataProvider();
-    const { updated } = await provider.syncMatchesToDatabase();
-    return NextResponse.json({ ok: true, updated });
+    const result = await syncScoresAndOdds({ forceOdds: req.nextUrl.searchParams.get('force') === '1' });
+    return NextResponse.json({ ok: true, updated: result.scoresUpdated, odds: result.odds });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ ok: false, error: message }, { status: 500 });

@@ -49,6 +49,7 @@ create table if not exists matches (
   override_away_score  integer,
   override_home_pens   integer,
   override_away_pens   integer,
+  odds                 jsonb,
   has_manual_override  boolean not null default false,
   created_at           timestamptz not null default now(),
   updated_at           timestamptz not null default now()

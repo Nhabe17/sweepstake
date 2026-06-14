@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
 import type { Match, Player, Settings, Team } from '@/lib/types';
 import { getEffectiveScore, teamPointsInMatch } from '@/lib/calculations/effectiveResult';
 import { dayTimeLabel } from '@/lib/format';
+import TeamName from './TeamName';
 import TeamNameWithOwner from './TeamNameWithOwner';
 
 const STAGE_LABEL: Record<Match['stage'], string> = {
@@ -86,6 +88,12 @@ export default function MatchCard({
         awayOwner={awayOwner}
         settings={settings}
       />
+      <BettingOddsSummary
+        match={match}
+        homeTeam={homeTeam}
+        awayTeam={awayTeam}
+        settings={settings}
+      />
     </article>
   );
 }
@@ -127,4 +135,47 @@ function PointsSummary({
       </div>
     </div>
   );
+}
+
+function BettingOddsSummary({
+  match,
+  homeTeam,
+  awayTeam,
+  settings,
+}: {
+  match: Match;
+  homeTeam?: Team;
+  awayTeam?: Team;
+  settings: Settings;
+}) {
+  const odds = match.odds;
+  if (!settings.showOdds || match.status !== 'scheduled' || !odds) return null;
+  if (!odds.home && !odds.draw && !odds.away) return null;
+
+  return (
+    <div className="mt-3 border-t border-slate-100 pt-2 text-xs">
+      <p className="mb-1 font-medium text-muted">Betting odds</p>
+      <div className="grid grid-cols-3 gap-2">
+        <OddsCell label={<TeamName team={homeTeam} fallback="Home" />} price={odds.home?.price} />
+        <OddsCell label="Draw" price={odds.draw?.price} />
+        <OddsCell label={<TeamName team={awayTeam} fallback="Away" />} price={odds.away?.price} />
+      </div>
+      <p className="mt-1 text-[11px] text-muted">
+        Best {odds.region.toUpperCase()} odds &middot; updated {oddsUpdatedLabel(odds.providerLastUpdate ?? odds.syncedAt)}
+      </p>
+    </div>
+  );
+}
+
+function OddsCell({ label, price }: { label: ReactNode; price?: number }) {
+  return (
+    <div className="min-w-0">
+      <p className="truncate text-[11px] text-muted">{label}</p>
+      <p className="font-bold tabular-nums text-ink">{price == null ? '-' : price.toFixed(2)}</p>
+    </div>
+  );
+}
+
+function oddsUpdatedLabel(value: string): string {
+  return new Date(value).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
 }
