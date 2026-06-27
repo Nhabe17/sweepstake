@@ -50,9 +50,27 @@ describe('seed data integrity', () => {
     }
   });
 
-  it('has some finished and some upcoming matches', () => {
-    expect(matches.some((m) => m.status === 'finished')).toBe(true);
-    expect(matches.some((m) => m.status !== 'finished')).toBe(true);
+  it('seeds every fixture as scheduled with no fabricated results (real-pending)', () => {
+    expect(matches.every((m) => m.status === 'scheduled')).toBe(true);
+    expect(
+      matches.every(
+        (m) =>
+          m.homeScore === null &&
+          m.awayScore === null &&
+          m.homePens === null &&
+          m.awayPens === null &&
+          m.apiHomeScore === null &&
+          m.apiAwayScore === null,
+      ),
+    ).toBe(true);
+  });
+
+  it('keeps all fixtures within the real group-stage window (11–27 June 2026)', () => {
+    for (const m of matches) {
+      const ms = +new Date(m.kickoffAt);
+      expect(ms).toBeGreaterThanOrEqual(+new Date('2026-06-11T00:00:00.000Z'));
+      expect(ms).toBeLessThanOrEqual(+new Date('2026-06-27T23:59:59.000Z'));
+    }
   });
 
   it('uses the official kickoff for Saudi Arabia v Uruguay', () => {
@@ -65,9 +83,5 @@ describe('seed data integrity', () => {
       apiHomeScore: null,
       apiAwayScore: null,
     });
-  });
-
-  it('does not mark future seed fixtures as live with fake scores', () => {
-    expect(matches.some((m) => m.status === 'live')).toBe(false);
   });
 });

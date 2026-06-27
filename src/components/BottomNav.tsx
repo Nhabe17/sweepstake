@@ -9,6 +9,7 @@ const ITEMS: NavItem[] = [
   { href: '/', label: 'Home', icon: '🏠' },
   { href: '/groups', label: 'Groups', icon: '🗂️' },
   { href: '/matches', label: 'Matches', icon: '⚽' },
+  { href: '/knockout', label: 'Knockout', icon: '🏟️' },
   { href: '/leaderboard', label: 'Table', icon: '🏆' },
   { href: '/my-teams', label: 'My Teams', icon: '👤' },
 ];
@@ -34,14 +35,14 @@ export default function BottomNav() {
               <Link
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1.5 text-[11px] font-medium transition-colors md:flex-row md:gap-2 md:px-3 md:text-sm ${
+                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 rounded-lg px-1 py-1.5 text-[10px] font-medium transition-colors sm:text-[11px] md:flex-row md:gap-2 md:px-3 md:text-sm ${
                   active ? 'text-brand-dark' : 'text-muted hover:text-ink'
                 }`}
               >
                 <span className="text-lg leading-none md:text-base" aria-hidden>
                   {item.icon}
                 </span>
-                <span>{item.label}</span>
+                <span className="max-w-full truncate">{item.label}</span>
               </Link>
             </li>
           );

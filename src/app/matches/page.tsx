@@ -4,14 +4,12 @@ import { useMemo, useState } from 'react';
 import { useSweepstake } from '@/hooks/useSweepstake';
 import { useSelectedPlayer } from '@/hooks/useSelectedPlayer';
 import { GROUP_LETTERS } from '@/lib/seed/teams';
-import { isToday } from '@/lib/format';
+import { filterMatches, type MatchFilter } from '@/lib/matches/filterMatches';
 import PageHeader from '@/components/PageHeader';
 import MatchCardResolved from '@/components/MatchCardResolved';
 import { LoadingState, EmptyState } from '@/components/states';
 
-type Filter = 'all' | 'today' | 'upcoming' | 'completed' | 'mine';
-
-const FILTERS: { key: Filter; label: string }[] = [
+const FILTERS: { key: MatchFilter; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'today', label: 'Today' },
   { key: 'upcoming', label: 'Upcoming' },
@@ -22,7 +20,7 @@ const FILTERS: { key: Filter; label: string }[] = [
 export default function MatchesPage() {
   const view = useSweepstake();
   const { teams, matches, players, settings, loading } = view;
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<MatchFilter>('all');
   const [group, setGroup] = useState<string>('');
   const [selectedPlayer, setSelectedPlayer] = useSelectedPlayer();
 
@@ -31,18 +29,10 @@ export default function MatchesPage() {
     [teams, selectedPlayer],
   );
 
-  const filtered = useMemo(() => {
-    return matches
-      .filter((m) => {
-        if (group && m.groupLetter !== group) return false;
-        if (filter === 'today') return isToday(m.kickoffAt);
-        if (filter === 'upcoming') return m.status === 'scheduled' || m.status === 'live';
-        if (filter === 'completed') return m.status === 'finished';
-        if (filter === 'mine') return myTeamIds.has(m.homeTeamId) || myTeamIds.has(m.awayTeamId);
-        return true;
-      })
-      .sort((a, b) => +new Date(a.kickoffAt) - +new Date(b.kickoffAt));
-  }, [matches, filter, group, myTeamIds]);
+  const filtered = useMemo(
+    () => filterMatches(matches, { filter, group, myTeamIds }),
+    [matches, filter, group, myTeamIds],
+  );
 
   if (loading) return <LoadingState />;
 
