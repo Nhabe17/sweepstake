@@ -35,6 +35,7 @@ create table if not exists matches (
   external_id          text,
   group_letter         text,
   stage                text not null,
+  bracket_slot         integer,
   home_team_id         text references teams(id),
   away_team_id         text references teams(id),
   kickoff_at           timestamptz not null,
@@ -54,6 +55,10 @@ create table if not exists matches (
   created_at           timestamptz not null default now(),
   updated_at           timestamptz not null default now()
 );
+
+create unique index if not exists matches_knockout_bracket_slot_key
+  on matches(stage, bracket_slot)
+  where stage <> 'group' and bracket_slot is not null;
 
 -- One row per setting key. The app stores everything under key = 'app'.
 create table if not exists settings (
@@ -92,5 +97,41 @@ begin
   end if;
   if not exists (select 1 from pg_policies where tablename = 'settings' and policyname = 'public_read') then
     create policy public_read on settings for select using (true);
+  end if;
+end $$;
+
+-- Realtime publication: lets open browsers refresh after shared-data changes.
+do $$
+begin
+  if not exists (select 1 from pg_publication where pubname = 'supabase_realtime') then
+    execute 'create publication supabase_realtime';
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'players'
+  ) then
+    execute 'alter publication supabase_realtime add table public.players';
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'teams'
+  ) then
+    execute 'alter publication supabase_realtime add table public.teams';
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'matches'
+  ) then
+    execute 'alter publication supabase_realtime add table public.matches';
+  end if;
+
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'settings'
+  ) then
+    execute 'alter publication supabase_realtime add table public.settings';
   end if;
 end $$;

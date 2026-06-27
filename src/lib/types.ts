@@ -32,6 +32,7 @@ export interface Match {
   externalId?: string | null;
   groupLetter?: string | null;
   stage: Stage;
+  bracketSlot?: number | null;
   homeTeamId: string;
   awayTeamId: string;
   kickoffAt: string; // ISO timestamp

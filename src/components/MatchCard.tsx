@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import type { Match, Player, Settings, Team } from '@/lib/types';
 import { getEffectiveScore, teamPointsInMatch } from '@/lib/calculations/effectiveResult';
 import { dayLabel, timeLabel } from '@/lib/format';
+import { shouldShowMatchOdds } from '@/lib/odds/oddsVisibility';
 import TeamName from './TeamName';
 import TeamNameWithOwner from './TeamNameWithOwner';
 
@@ -162,8 +163,7 @@ function BettingOddsSummary({
   settings: Settings;
 }) {
   const odds = match.odds;
-  if (!settings.showOdds || match.status !== 'scheduled' || !odds) return null;
-  if (!odds.home && !odds.draw && !odds.away) return null;
+  if (!odds || !shouldShowMatchOdds(match, settings)) return null;
 
   return (
     <div className="mt-3 border-t border-slate-100 pt-2 text-xs">
