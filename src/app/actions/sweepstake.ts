@@ -127,6 +127,8 @@ export async function applySeedFixtureCorrectionsAction(): Promise<void> {
     if (error) throw new Error(error.message);
   }
 
+  // Clear the legacy "fake live 1-0" seed rows (mirrors isLegacyFakeLiveSeedMatch in
+  // seedCorrections.ts) — an early seed shipped these as live placeholders; reset to scheduled.
   const { error } = await db
     .from('matches')
     .update({
@@ -154,9 +156,12 @@ export async function resetAction(): Promise<void> {
   const db = getServiceClient();
   const seed = buildSeedData();
   // Order matters for FKs: matches → teams → players on delete; insert in reverse.
-  await db.from('matches').delete().not('id', 'is', null);
-  await db.from('teams').delete().not('id', 'is', null);
-  await db.from('players').delete().not('id', 'is', null);
+  const delMatches = await db.from('matches').delete().not('id', 'is', null);
+  if (delMatches.error) throw new Error(delMatches.error.message);
+  const delTeams = await db.from('teams').delete().not('id', 'is', null);
+  if (delTeams.error) throw new Error(delTeams.error.message);
+  const delPlayers = await db.from('players').delete().not('id', 'is', null);
+  if (delPlayers.error) throw new Error(delPlayers.error.message);
 
   const p = await db.from('players').insert(seed.players.map(playerToRow));
   if (p.error) throw new Error(p.error.message);

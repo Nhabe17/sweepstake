@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { store } from '@/lib/data';
 import { getBrowserClient } from '@/lib/supabase/client';
 import { isSupabaseConfigured } from '@/lib/supabase/env';
+import { DEFAULT_SETTINGS } from '@/lib/types';
 import type { Player, SweepstakeData, Team } from '@/lib/types';
 
 export interface SweepstakeView extends SweepstakeData {
@@ -18,15 +19,7 @@ const EMPTY: SweepstakeData = {
   players: [],
   teams: [],
   matches: [],
-  settings: {
-    tournamentName: 'World Cup Sweepstake',
-    teamsLocked: false,
-    pointsWin: 3,
-    pointsDraw: 1,
-    pointsLoss: 0,
-    showOdds: false,
-    bonusesEnabled: false,
-  },
+  settings: DEFAULT_SETTINGS,
 };
 
 const REALTIME_REFRESH_DEBOUNCE_MS = 500;

@@ -3,8 +3,7 @@
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { useSweepstake } from '@/hooks/useSweepstake';
-import { computeLeaderboard } from '@/lib/calculations/sweepstakeLeaderboard';
-import { teamPointsInMatch } from '@/lib/calculations/effectiveResult';
+import { computeKnockoutLeaderboard } from '@/lib/knockout/knockoutSurvival';
 import { isToday } from '@/lib/format';
 import PageHeader from '@/components/PageHeader';
 import MatchCardResolved from '@/components/MatchCardResolved';
@@ -16,7 +15,7 @@ export default function HomePage() {
   const { players, teams, matches, settings, loading } = view;
 
   const leaderboard = useMemo(
-    () => computeLeaderboard(players, teams, matches, settings),
+    () => computeKnockoutLeaderboard(players, teams, matches, settings),
     [players, teams, matches, settings],
   );
 
@@ -41,6 +40,8 @@ export default function HomePage() {
   if (loading) return <LoadingState />;
 
   const leader = leaderboard[0];
+  const leaders = leaderboard.filter((r) => r.rank === 1);
+  const jointLeaders = leaders.length > 1;
 
   return (
     <div className="space-y-6">
@@ -49,15 +50,26 @@ export default function HomePage() {
       {leader ? (
         <section className="relative rounded-xl bg-gradient-to-br from-pitch to-pitch-dark p-5 text-white shadow-sm">
           <Confetti />
-          <p className="text-xs uppercase tracking-wide text-white/70">Current leader</p>
-          <p className="mt-1 text-2xl font-bold">
-            🥇 {leader.player.name} <span className="text-white/70">({leader.player.displayCode})</span>
+          <p className="text-xs uppercase tracking-wide text-white/70">
+            {jointLeaders ? 'Joint leaders' : 'Current leader'}
           </p>
-          <p className="text-white/80">{leader.points} pts</p>
+          <p className="mt-1 text-2xl font-bold">
+            🥇{' '}
+            {jointLeaders ? (
+              formatNameList(leaders.map((r) => r.player.name))
+            ) : (
+              <>
+                {leader.player.name} <span className="text-white/70">({leader.player.displayCode})</span>
+              </>
+            )}
+          </p>
+          <p className="text-white/80">
+            {leader.remainingCount} of {leader.totalOwned} teams still in{jointLeaders ? ' each' : ''}
+          </p>
           <div className="mt-3 flex flex-wrap gap-2">
             {leaderboard.slice(0, 3).map((r) => (
               <span key={r.player.id} className="rounded-full bg-white/15 px-3 py-1 text-sm">
-                #{r.rank} {r.player.displayCode} · {r.points}
+                T{r.rank} {r.player.displayCode} · {r.remainingCount} left
               </span>
             ))}
           </div>
@@ -110,6 +122,11 @@ export default function HomePage() {
       </div>
     </div>
   );
+}
+
+function formatNameList(names: string[]): string {
+  if (names.length <= 1) return names[0] ?? '';
+  return `${names.slice(0, -1).join(', ')} & ${names[names.length - 1]}`;
 }
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
