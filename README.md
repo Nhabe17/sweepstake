@@ -95,10 +95,15 @@ Supabase has a free tier that comfortably covers this app.
 5. `npm run dev` (or redeploy). The app now uses shared data; open it on two devices to
    confirm an admin edit on one appears on the other.
 
-**Security:** anon clients can only *read* (Row Level Security has no write policy). All
-writes go through Next.js server actions using the service-role key, which stays server-side.
-There is intentionally **no admin login in the MVP** — anyone with the link can reach the
-admin pages. Add a PIN/auth gate before sharing widely (see "Extending" below).
+> [!WARNING]
+> **Security — the admin write path is unauthenticated.** Anon Supabase clients can only
+> *read* (Row Level Security has no write policy), so the browser can't mutate data directly.
+> **However**, all writes go through Next.js server actions (`src/app/actions/sweepstake.ts`,
+> marked `'use server'`), and those compile to **public POST endpoints**. Anyone who can reach
+> the deployed URL can invoke them directly — resetting data, overriding results, reassigning
+> teams — regardless of the read-only RLS. There is intentionally **no admin gate in the MVP**.
+> Treat the deployment URL as a shared admin credential, and add a PIN/auth gate (verified
+> *inside* each server action, not just in the UI) before sharing widely — see "Extending".
 
 > Note: Supabase pauses free projects after ~7 days of inactivity — fine during a month of
 > daily tournament use.
