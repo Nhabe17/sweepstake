@@ -7,10 +7,10 @@ type NavItem = { href: string; label: string; icon: string };
 
 const ITEMS: NavItem[] = [
   { href: '/', label: 'Home', icon: '🏠' },
-  { href: '/groups', label: 'Groups', icon: '🗂️' },
-  { href: '/matches', label: 'Matches', icon: '⚽' },
   { href: '/knockout', label: 'Knockout', icon: '🏟️' },
   { href: '/leaderboard', label: 'Table', icon: '🏆' },
+  { href: '/groups', label: 'Groups', icon: '🗂️' },
+  { href: '/matches', label: 'Matches', icon: '⚽' },
   { href: '/my-teams', label: 'My Teams', icon: '👤' },
 ];
 
